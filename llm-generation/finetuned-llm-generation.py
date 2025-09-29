@@ -1,0 +1,159 @@
+import os
+import json
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import warnings
+warnings.filterwarnings("ignore", message="Setting `pad_token_id` to `eos_token_id`:None for open-end generation.")
+# 使用微调后的模型路径
+model_name = "/home/wangdonghua/Qwen/deepseek-14b/saved_model"#微调后的模型路径
+
+# 加载微调过的模型和 tokenizer，显式指定 float16 精度以启用 bitsandbytes
+model = AutoModelForCausalLM.from_pretrained(
+    model_name,
+    torch_dtype="float16",  # 启用 bitsandbytes 的低精度计算
+    device_map="auto"  # 自动选择设备
+)
+
+tokenizer = AutoTokenizer.from_pretrained(model_name)
+
+
+
+
+buglist_dict = {
+        # 'Chart': {'total': 26, 'start': 1},
+        # 'Math': {'total': 107, 'start': 1},
+        #  'Mockito': {'total': 38, 'start': 10},
+        # 'Lang': {'total': 35, 'start': 33},
+         'Time': {'total': 27, 'start': 1},
+    # 'Closure': {'total': 134, 'start': 71},
+}
+
+for bug, info in buglist_dict.items():
+    total = info['total']
+    start = info['start']
+    
+    for i in range(start, 1 + total):
+        print(f"Processing {bug}_{i}")
+        # 单个文件路径
+        file_path = f"/home/wangdonghua/Qwen/data/wt-dataset/{bug}/{bug}_{i}.json"
+
+        # 用于保存噪声变异体编号的文件路径
+        output_file1 = f"/home/wangdonghua/nowt/zxd/deepseek-8b/output1/{bug}/{bug}_{i}_mutants.json"
+        output_file2 = f"/home/wangdonghua/nowt/zxd/deepseek-8b/output2/{bug}/{bug}_{i}_mutants.json"
+        output_file3 = f"/home/wangdonghua/nowt/zxd/deepseek-8b/output3/{bug}/{bug}_{i}_mutants.json"
+        output_file4 = f"/home/wangdonghua/nowt/zxd/deepseek-8b/output4/{bug}/{bug}_{i}_mutants.json"
+        output_file5 = f"/home/wangdonghua/nowt/zxd/deepseek-8b/output5/{bug}/{bug}_{i}_mutants.json"
+
+
+        # 确保输出文件的目录存在
+        os.makedirs(os.path.dirname(output_file1), exist_ok=True)
+        os.makedirs(os.path.dirname(output_file2), exist_ok=True) 
+        os.makedirs(os.path.dirname(output_file3), exist_ok=True) 
+        os.makedirs(os.path.dirname(output_file4), exist_ok=True) 
+        os.makedirs(os.path.dirname(output_file5), exist_ok=True) 
+
+        # 初始化文件写入
+        with open(output_file1, "w", encoding="utf-8") as out_file1:
+            with open(output_file2, "w", encoding="utf-8") as out_file2:
+                with open(output_file3, "w", encoding="utf-8") as out_file3:
+                    with open(output_file4, "w", encoding="utf-8") as out_file4:
+                        with open(output_file5, "w", encoding="utf-8") as out_file5:
+                            try:
+                                # 尝试读取文件内容
+                                with open(file_path, 'r', encoding='utf-8') as f:
+                                    data = json.load(f)
+                            except (FileNotFoundError, json.JSONDecodeError):
+                                continue
+                            num=0
+                            # 如果 data 是列表，逐条处理
+                            if isinstance(data, list):
+                                for item in data:
+                                    prompt = f'''
+Please determine whether this mutant is a FLIM?  
+{item["original_code"]} 
+{item["test_error"]}  
+{item["mutant_code"]}  
+{item["mutant_class"]}  
+{item["line_number"]}  
+{item["mutation_error"]}
+## Output Forma
+Only return a response that can be parsed by JSON, without any other content. The format is as follows:
+json
+{{
+    "mutant_id": {item["mutant_id"]}
+    "is_flim": bool
+}}
+'''
+                                    # 构建模型输入
+                                    messages = [
+                                        {"role": "system", "content": ""},
+                                        {"role": "user", "content": prompt}
+                                    ]
+
+                                    text = messages[1]["content"]
+                                    model_inputs = tokenizer([text], return_tensors="pt", truncation=True, max_length=40960).to(model.device)
+
+                                    # 生成文本
+                                    try:
+                                        generated_ids = model.generate(**model_inputs, max_new_tokens=512,do_sample=True, top_p=0.9, temperature=0.7)
+                                        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
+                                        response1 = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                                    except Exception:
+                                        continue
+
+                                    # 写入当前条目结果
+                                  
+                                    out_file1.write(f"Result: {response1}\n")
+                                    out_file1.write("-" * 50 + "\n")
+
+                                    try:
+                                        generated_ids = model.generate(**model_inputs, max_new_tokens=512,do_sample=True, top_p=0.9, temperature=0.7)
+                                        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
+                                        response2 = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                                    except Exception:
+                                        continue
+
+                                    # 写入当前条目结果
+                                    
+                                    out_file2.write(f"Result: {response2}\n")
+                                    out_file2.write("-" * 50 + "\n")
+                                    try:
+                                        generated_ids = model.generate(**model_inputs, max_new_tokens=512,do_sample=True, top_p=0.9, temperature=0.7)
+                                        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
+                                        response3 = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                                    except Exception:
+                                        continue
+
+                                    # 写入当前条目结果
+                                    
+                                    out_file3.write(f"Result: {response3}\n")
+                                    out_file3.write("-" * 50 + "\n")
+                                    
+                                    try:
+                                        generated_ids = model.generate(**model_inputs, max_new_tokens=512,do_sample=True, top_p=0.9, temperature=0.7)
+                                        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
+                                        response4 = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                                    except Exception:
+                                        continue
+
+                                    # 写入当前条目结果
+                                    
+                                    out_file4.write(f"Result: {response4}\n")
+                                    out_file4.write("-" * 50 + "\n")
+                                    
+                                    try:
+                                        generated_ids = model.generate(**model_inputs, max_new_tokens=512,do_sample=True, top_p=0.9, temperature=0.7)
+                                        generated_ids = [output_ids[len(input_ids):] for input_ids, output_ids in zip(model_inputs.input_ids, generated_ids)]
+                                        response5 = tokenizer.batch_decode(generated_ids, skip_special_tokens=True)[0]
+                                    except Exception:
+                                        continue
+
+                                    # 写入当前条目结果
+                                    
+                                    out_file5.write(f"Result: {response5}\n")
+                                    out_file5.write("-" * 50 + "\n")
+
+                        print(f"{bug}_{i} results saved to {output_file1}")
+                        print(f"{bug}_{i} results saved to {output_file2}")
+                        print(f"{bug}_{i} results saved to {output_file3}")
+                        print(f"{bug}_{i} results saved to {output_file4}")
+                        print(f"{bug}_{i} results saved to {output_file5}")
