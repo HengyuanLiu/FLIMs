@@ -211,11 +211,11 @@ for bug, bugnumber in buggy.items():
     for idex in range(1, bugnumber + 1):
         print(f"{bug}_{idex}")
         try:
-            file_path1=rf'D:\code\mbfl data\{bug}\{idex}\killmaps\{bug}\{idex}\killmap.csv.gz'
-            file_path2=rf"D:\Graduate\code\result\dataset-512\{bug}\{idex}\{bug}_{idex}.json"
-            file_path3=rf"D:\code\mbfl data\{bug}\{idex}\killmaps\{bug}\{idex}\mutants.log"
-            file_path4=rf"D:\Graduate\code\result\bug-mutant\{bug}\{bug}-{idex}.keys.txt"
-            output_dir = rf"D:\Graduate\new-experimina\wt-dataset-new\{bug}"
+            file_path1=rf'data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/killmap.csv.gz'
+            file_path2=rf"results/dataset-512/{bug}/{idex}/{bug}_{idex}.json"
+            file_path3=rf"data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/mutants.log"
+            file_path4=rf"results/bug-mutant/{bug}/{bug}-{idex}.keys.txt"
+            output_dir = rf"results/wt-dataset-new/{bug}"
             if not os.path.exists(output_dir):
                         os.makedirs(output_dir)
             output_path = os.path.join(output_dir, f'{bug}_{idex}.json')
@@ -288,12 +288,13 @@ for bug, bugnumber in buggy.items():
             with open(output_path, "w", encoding="utf-8") as f:
             
                 json.dump(formatted_data, f, ensure_ascii=False, indent=2)
-            with open(r"D:\Graduate\new-experimina\dataset\dataset-wt.log", "a") as f:
-               f.write(f"{bug}_{idex}   complete !!!\n")
-            
-        except:
-            with open(r"D:\Graduate\new-experimina\dataset\dataset-wt.log", "a") as f:
-               f.write(f"{bug}_{idex}  error !!!\n")
+            with open(r"logs/dataset-wt.log", "a") as f:
+                f.write(f"{bug}_{idex} success\n")
+                f.flush()
+        except Exception as e:
+            with open(r"logs/dataset-wt.log", "a") as f:
+                f.write(f"{bug}_{idex} error: {str(e)}\n")
+                f.flush()
             
 
        

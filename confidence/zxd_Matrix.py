@@ -85,13 +85,13 @@ if __name__ == "__main__":
             
             for i in range(start, 1 + total):
                 print(f"{bug}_{i}")
-                mutant_id_path=rf"D:\Graduate\code\result\error1\{bug}\{i}\pf_{i}.xlsx"
-                wkill_mutant_id1=rf"D:\Graduate\new-experimina\result\deepseek-8b\id-static\output5\{bug}\{bug}_{i}.txt"
-                wkill_mutant_id2=rf"D:\Graduate\new-experimina\result\deepseek-8b\id-static\output1\{bug}\{bug}_{i}.txt"
-                wkill_mutant_id3=rf"D:\Graduate\new-experimina\result\deepseek-8b\id-static\output2\{bug}\{bug}_{i}.txt"
-                wkill_mutant_id4=rf"D:\Graduate\new-experimina\result\deepseek-8b\id-static\output3\{bug}\{bug}_{i}.txt"
-                wkill_mutant_id5=rf"D:\Graduate\new-experimina\result\deepseek-8b\id-static\output4\{bug}\{bug}_{i}.txt"
-                outpath=rf"D:\Graduate\new-experimina\result\deepseek-8b\wkill_matrix\{bug}"
+                mutant_id_path=rf"results/processed_data/{bug}/{i}/pf_{i}.xlsx"
+        wkill_mutant_id1=rf"results/flim_recognition/output5/{bug}/{bug}_{i}.txt"
+        wkill_mutant_id2=rf"results/flim_recognition/output1/{bug}/{bug}_{i}.txt"
+        wkill_mutant_id3=rf"results/flim_recognition/output2/{bug}/{bug}_{i}.txt"
+        wkill_mutant_id4=rf"results/flim_recognition/output3/{bug}/{bug}_{i}.txt"
+        wkill_mutant_id5=rf"results/flim_recognition/output4/{bug}/{bug}_{i}.txt"
+        outpath=rf"results/confidence_matrix/{bug}"
                 if not os.path.exists(outpath):
                     os.makedirs(outpath)
                 output_file = rf"{outpath}\{bug}_{i}_wkill_matrix.csv"

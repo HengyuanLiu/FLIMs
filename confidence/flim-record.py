@@ -53,8 +53,8 @@ for bug, bugnumber in buggy.items():
         for idex in range(1, bugnumber + 1):
             print(f"{bug}_{idex}")
             try:
-                file_path = rf'D:\Graduate\new-experimina\result\deepseek-8b\output{num}\{bug}\{bug}_{idex}_mutants.json'
-                out_file=rf'D:\Graduate\new-experimina\result\deepseek-8b\id-static\output{num}\{bug}\{bug}_{idex}.txt'#替换为实际输出文件路径
+                file_path = rf'results/llm_output/output{num}/{bug}/{bug}_{idex}_mutants.json'
+            out_file=rf'results/flim_recognition/output{num}/{bug}/{bug}_{idex}.txt'  # Output file path for FLIM recognition results
                 directory = os.path.dirname(out_file)
                 if not os.path.exists(directory):
                     os.makedirs(directory)

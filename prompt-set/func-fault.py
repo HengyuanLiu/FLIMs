@@ -70,9 +70,9 @@ if __name__ == "__main__":
         for idex in range(1, bugnumber + 1):
             print(f"{bug}-{idex}b start!!!")
             try:
-                file = rf'D:\Graduate\code\fault\BuggyMethod\{bug}\{bug}-{idex}.buggy.methods'
-                file3 = rf"D:\code\mbfl data\{bug}\{idex}\killmaps\{bug}\{idex}\mutants.log"
-                file2 = rf'D:\code\chain\{bug}\{idex}b\method-base.csv'
+                file = rf'data/fault/BuggyMethod/{bug}/{bug}-{idex}.buggy.methods'
+                file3 = rf"data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/mutants.log"
+                file2 = rf'data/chain/{bug}/{idex}b/method-base.csv'
                 query=queryname(file2)
                 #print(query)
                 mut = mutants(file3)
@@ -82,7 +82,7 @@ if __name__ == "__main__":
                 for key, value in query.items():
                     if value in fault:
                         methods.append(key)
-                output_file_path = rf"D:\Graduate\code\result\bug-mutant\{bug}\{bug}-{idex}.methods.txt"
+                output_file_path = rf"results/bug-mutant/{bug}/{bug}-{idex}.methods.txt"
                 
                 save(methods, output_file_path)
                 # for line in 

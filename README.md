@@ -1,12 +1,32 @@
-# flimr-fl Project Documentation
+# FLIMs: Fault Localization Interference Mutants, Definition, Recognition and Mitigation
+
+This repository contains the implementation of **MBFL-FLIM**, a novel fault localization framework that addresses interference mutants in Mutation-based Fault Localization (MBFL) using Large Language Model (LLM)-based semantic analysis.
+
+## Method Framework
+
+![MBFL-FLIM Framework](MBFL-FLIM.png)
+
+The MBFL-FLIM framework integrates FLIM recognition and mitigation into the traditional MBFL workflow, enhancing fault localization effectiveness by reducing misleading interference while preserving real fault-revealing information.
+
+## Data Sources
+
+This implementation works with fault localization datasets from the **Defects4J** benchmark. The Defects4J dataset provides real-world Java bugs and their corresponding test suites, which can be obtained from:
+
+- **Defects4J GitHub Repository**: [https://github.com/rjust/defects4j](https://github.com/rjust/defects4j)
+
+The experimental evaluation uses Defects4J v1.2.0 with 395 buggy programs across six open-source Java projects (Chart, Math, Closure, Lang, Mockito, Time).
 
 ## Project Overview
 
-This project is a fault localization and repair system based on large language models (LLMs). It primarily consists of three core modules: prompt construction, LLM output generation, and confidence score calculation.
+This repository contains the implementation of FLIM recognition and mitigation techniques, organized into three main modules:
+
+1. **Prompt Construction Module** (`prompt-set/`): Generates prompts for LLM-based FLIM recognition
+2. **LLM Output Generation Module** (`llm-generation/`): Handles LLM inference and output generation  
+3. **Confidence Score Calculation Module** (`confidence/`): Analyzes LLM outputs and calculates final fault localization results
 
 ## Directory Structure
 
-d:\Graduate\flimr-fl code
+FLIMs
 
 ├── code\                   # Main code directory
 
@@ -30,9 +50,9 @@ This module is responsible for constructing prompts for the large language model
 
 **Input Files**:
 
-* file = rf'D:\Graduate\code\fault\BuggyMethod{bug}{bug}-{idex}.buggy.methods'
-* file3 = rf"D:\code\mbfl data{bug}{idex}\killmaps{bug}{idex}\mutants.log"
-* file2 = rf'D:\code\chain{bug}{idex}b\method-base.csv'
+* file = rf'data/fault/BuggyMethod/{bug}/{bug}-{idex}.buggy.methods'
+* file3 = rf"data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/mutants.log"
+* file2 = rf'data/chain/{bug}/{idex}b/method-base.csv'
 
 **Output Files**: Generates intermediate data containing error function information for subsequent prompt construction
 
@@ -42,7 +62,7 @@ This module is responsible for constructing prompts for the large language model
 
 **Input Files**: Error function information, test coverage data
 
-* gzip_file_path =rf"D:\code\mbfl data{bug}{idex}\killmaps{bug}{idex}\killmap.csv.gz"
+* gzip_file_path = rf"data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/killmap.csv.gz"
 
 **Output Files**: Contains intermediate data with mutant suspicion scores, akp, akf, and other parameters
 
@@ -52,10 +72,10 @@ This module is responsible for constructing prompts for the large language model
 
 **Input Files**: Error function information, mutant data, test results
 
-* file_path1=rf'D:\code\mbfl data{bug}{idex}\killmaps{bug}{idex}\killmap.csv.gz'
-* file_path2=rf"D:\Graduate\code\result\dataset-512{bug}{idex}{bug}_{idex}.json"
-* file_path3=rf"D:\code\mbfl data{bug}{idex}\killmaps{bug}{idex}\mutants.log"
-* file_path4=rf"D:\Graduate\code\result\bug-mutant{bug}{bug}-{idex}.keys.txt"
+* file_path1 = rf'data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/killmap.csv.gz'
+* file_path2 = rf"results/dataset-512/{bug}/{idex}/{bug}_{idex}.json"
+* file_path3 = rf"data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/mutants.log"
+* file_path4 = rf"results/bug-mutant/{bug}/{bug}-{idex}.keys.txt"
 
 **Output Files**: Constructed prompt dataset for LLM input or fine-tuning
 
@@ -106,7 +126,7 @@ This module is responsible for analyzing the confidence of LLM output results an
 
 **Input Files**: LLM output result files
 
-* file_path=rf'D:\Graduate\new-experimina\result\deepseek-8b\output{num}{bug}{bug} *{idex}* mutants.json'
+* file_path = rf'results/llm_output/output{num}/{bug}/{bug}_{idex}_mutants.json'
 
 **Output Files**: Classification result records, identifying the category of each mutant
 
@@ -124,7 +144,7 @@ This module is responsible for analyzing the confidence of LLM output results an
 
 **Input Files**: Confidence score matrix file
 
-* input_path=rf"D:\Graduate\new-experimina\result\deepseek-8b\wkill_matrix{bug}{bug} *{i}* wkill_matrix.csv"
+* input_path = rf"results/confidence_matrix/{bug}/{bug}_{i}_wkill_matrix.csv"
 
 **Output Files**: Mutant confidence weight file, recording the weight value for each mutant
 
@@ -134,10 +154,71 @@ This module is responsible for analyzing the confidence of LLM output results an
 
 **Input Files**: Original mutant suspicion scores, confidence weight results
 
-* file_csv=os.path.join(rf"D:\Graduate\new-experimina\result\deepseek-8b\p-f-pca", bug, f"pf_{i}.csv")
-* file_xlsx=os.path.join(fr"D:\Graduate\code\result\error1", bug, str(i), f"pf_{i}.xlsx")
+* file_csv = os.path.join(rf"results/confidence_weights", bug, f"pf_{i}.csv")
+* file_xlsx = os.path.join(fr"results/processed_data", bug, str(i), f"pf_{i}.xlsx")
 
 **Output Files**: Updated mutant suspicion score file, used for final fault localization
+
+## Expected Directory Structure
+
+To use this implementation, organize your data according to the following structure:
+
+```
+FLIMs/
+├── data/                           # Input data directory
+│   ├── fault/                      # Fault localization data
+│   │   └── BuggyMethod/           # Buggy method information
+│   ├── mbfl_data/                 # MBFL experimental data
+│   │   └── {project}/             # Project-specific data (Chart, Math, etc.)
+│   │       └── {version}/         # Version-specific data
+│   │           └── killmaps/      # Mutation testing results
+│   └── chain/                     # Method call chain data
+├── results/                       # Output results directory
+│   ├── bug-mutant/               # Processed mutant data
+│   ├── dataset-512/              # Generated datasets
+│   ├── llm_output/               # LLM inference results
+│   ├── flim_recognition/         # FLIM recognition results
+│   ├── confidence_matrix/        # Confidence score matrices
+│   ├── confidence_weights/       # Calculated confidence weights
+│   ├── final_scores/             # Final fault localization scores
+│   └── processed_data/           # Intermediate processed data
+├── logs/                         # Log files
+├── prompt-set/                   # Prompt construction module
+├── llm-generation/              # LLM output generation module
+├── confidence/                  # Confidence calculation module
+└── README.md
+```
+
+## Usage Instructions
+
+### Prerequisites
+
+1. **Defects4J Setup**: Install and configure Defects4J v1.2.0 following the [official documentation](https://github.com/rjust/defects4j/wiki)
+2. **Data Preparation**: Extract mutation testing data (killmaps, mutants.log) for your target projects
+3. **Python Environment**: Ensure Python 3.7+ with required dependencies (pandas, numpy, json, etc.)
+
+### Execution Workflow
+
+Execute the modules in the following order:
+
+1. **Prompt Construction** (`prompt-set/`):
+   ```bash
+   python func-fault.py      # Extract faulty methods
+   python kp-kf-c.py         # Process kill/pass data
+   python final-dataset.py   # Generate LLM input dataset
+   ```
+
+2. **LLM Output Generation** (`llm-generation/`):
+   - Use your preferred LLM (GPT, DeepSeek, Qwen, etc.) to process the generated prompts
+   - Save outputs in the expected JSON format
+
+3. **Confidence Score Calculation** (`confidence/`):
+   ```bash
+   python flim-record.py     # Extract FLIM classifications
+   python zxd_Matrix.py      # Calculate confidence matrices
+   python p-f-wkill.py       # Compute confidence weights
+   python p-f-new.py         # Generate final fault localization scores
+   ```
 
 ## Data Flow
 
@@ -145,9 +226,18 @@ This module is responsible for analyzing the confidence of LLM output results an
 2. The LLM output generation module uses the prompt dataset to generate model outputs
 3. The confidence score calculation module analyzes the model outputs, calculates confidence weights, and updates mutant suspicion scores
 
+## Configuration
+
+Before running the scripts, ensure:
+
+1. **Path Configuration**: All file paths are relative to the project root directory
+2. **Project Selection**: Modify the `buggy` dictionary in each script to specify target projects and versions
+3. **Output Directories**: The scripts will automatically create necessary output directories
+
 ## Notes
 
 1. Ensure all input file paths are correct before running the code
 2. There are dependencies between modules; please execute them in order
 3. Intermediate files and result files will be saved in their respective data directories
+4. The implementation supports multiple projects from Defects4J (Chart, Math, Closure, Lang, Mockito, Time)
 

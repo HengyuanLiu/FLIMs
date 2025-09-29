@@ -23,9 +23,9 @@ if __name__ == "__main__":
                 print(f"{bug}_{i}")
 
                 # 文件路径拼接
-                file_csv = os.path.join(rf"D:\Graduate\new-experimina\result\deepseek-8b\p-f-pca", bug, f"pf_{i}.csv")
-                file_xlsx = os.path.join(fr"D:\Graduate\code\result\error1", bug, str(i), f"pf_{i}.xlsx")
-                outpath = os.path.join(rf"D:\Graduate\new-experimina\result\deepseek-8b\pf-pca", bug)
+                file_csv = os.path.join(rf"results/confidence_weights", bug, f"pf_{i}.csv")
+        file_xlsx = os.path.join(fr"results/processed_data", bug, str(i), f"pf_{i}.xlsx")
+        outpath = os.path.join(rf"results/final_scores", bug)
 
                 # 创建输出目录（如果不存在）
                 os.makedirs(outpath, exist_ok=True)

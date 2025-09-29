@@ -78,8 +78,8 @@ for bug, bugnumber in buggy.items():
   for idex in range(1, bugnumber + 1):
     print(f"{bug}-{idex}  strat----------------------------")
     try :
-      gzip_file_path = rf"D:\code\mbfl data\{bug}\{idex}\killmaps\{bug}\{idex}\killmap.csv.gz"
-      output_dir = rf"D:\Graduate\code\result\error1\{bug}\{idex}"
+      gzip_file_path = rf"data/mbfl_data/{bug}/{idex}/killmaps/{bug}/{idex}/killmap.csv.gz"
+            output_dir = rf"results/processed_data/{bug}/{idex}"
       if not os.path.exists(output_dir):
             os.makedirs(output_dir)
       file_name = f'pf_{idex}.xlsx'

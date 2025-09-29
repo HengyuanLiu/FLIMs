@@ -120,8 +120,8 @@ if __name__ == "__main__":
         for i in range(start, 1 + total):
             try:
                 print(f"{bug}_{i}")
-                input_path = rf"D:\Graduate\new-experimina\result\deepseek-8b\wkill_matrix\{bug}\{bug}_{i}_wkill_matrix.csv"
-                output_parent_dir = rf"D:\Graduate\new-experimina\result\deepseek-8b\p-f-pca\{bug}"
+                input_path = rf"results/confidence_matrix/{bug}/{bug}_{i}_wkill_matrix.csv"
+        output_parent_dir = rf"results/confidence_weights/{bug}"
                 output_path = os.path.join(output_parent_dir, rf"pf_{i}.csv")
 
                 # 基于熵的加权平均
